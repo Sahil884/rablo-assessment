@@ -1,0 +1,175 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+export default function CreateProfilePage() {
+  const router = useRouter();
+  const userID =
+    typeof window !== "undefined" ? localStorage.getItem("userID") : null;
+
+  const [form, setForm] = useState({
+    fullName: "",
+    contactNumber: "",
+    gender: "",
+    dob: "",
+    role: "Manager",
+    coordinates: [77.5946, 12.9716], // static for now
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    state: "",
+    country: "India",
+    pincode: "",
+  });
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!userID) return;
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/manager/createManagerProfile/${userID}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contactNumber: form.contactNumber,
+          dob: form.dob,
+          role: form.role,
+          coordinates: form.coordinates,
+          city: form.city,
+          state: form.state,
+          country: form.country,
+          pincode: form.pincode,
+        }),
+      },
+    );
+
+    if (res.ok) {
+      localStorage.setItem("accCreated", "1");
+      router.push("/dashboard");
+    } else {
+      alert("Profile creation failed. Please check required fields.");
+    }
+  }
+
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-lg space-y-4"
+      >
+        <h1 className="text-3xl font-bold text-center">Let's Begin</h1>
+        <p className="text-gray-400 text-center mb-6">
+          Create your account to start your journey.
+        </p>
+
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={form.fullName}
+          onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+        />
+
+        <input
+          type="text"
+          placeholder="Phone Number"
+          value={form.contactNumber}
+          onChange={(e) => setForm({ ...form, contactNumber: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        />
+
+        <select
+          value={form.gender}
+          onChange={(e) => setForm({ ...form, gender: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        >
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Others">Others</option>
+        </select>
+
+        <input
+          type="date"
+          value={form.dob}
+          onChange={(e) => setForm({ ...form, dob: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        />
+
+        <select
+          value={form.role}
+          onChange={(e) => setForm({ ...form, role: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        >
+          <option value="Manager">Manager – You Manage the Business</option>
+        </select>
+
+        <input
+          type="text"
+          placeholder="Address Line 1"
+          value={form.addressLine1}
+          onChange={(e) => setForm({ ...form, addressLine1: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Address Line 2 (Optional)"
+          value={form.addressLine2}
+          onChange={(e) => setForm({ ...form, addressLine2: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+        />
+
+        <input
+          type="text"
+          placeholder="City"
+          value={form.city}
+          onChange={(e) => setForm({ ...form, city: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="State"
+          value={form.state}
+          onChange={(e) => setForm({ ...form, state: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Country"
+          value={form.country}
+          onChange={(e) => setForm({ ...form, country: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Pincode"
+          value={form.pincode}
+          onChange={(e) => setForm({ ...form, pincode: e.target.value })}
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          required
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-[#B8FE22] text-black font-semibold py-2 rounded hover:bg-green-500"
+        >
+          Save Profile
+        </button>
+      </form>
+    </main>
+  );
+}

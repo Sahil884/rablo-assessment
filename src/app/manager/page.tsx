@@ -1,12 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
 
 export default function CreateProfilePage() {
+  const { setUserID, setAccCreated } = useAuth();
   const router = useRouter();
-  const userID =
-    typeof window !== "undefined" ? localStorage.getItem("userID") : null;
+  const searchParams = useSearchParams();
+
+  // const userID =
+  //   typeof window !== "undefined" ? localStorage.getItem("userID") : null;
+
+  const userID = searchParams.get("userID");
+
+  useEffect(() => {
+    if (userID) {
+      // Save to localStorage
+      localStorage.setItem("userID", userID);
+      // Save to context
+      setUserID(userID);
+
+      const accCreated = localStorage.getItem("accCreated");
+      if (accCreated === "1") {
+        setAccCreated(1);
+        router.push("/dashboard");
+      } else {
+        setAccCreated(0);
+        // stay on manager page (profile creation form)
+      }
+    }
+  }, [userID, router, setUserID, setAccCreated]);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -167,7 +191,7 @@ export default function CreateProfilePage() {
           type="submit"
           className="w-full bg-[#B8FE22] text-black font-semibold py-2 rounded hover:bg-green-500"
         >
-          Save Profile
+          Create Profile
         </button>
       </form>
     </main>

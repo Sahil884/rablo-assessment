@@ -1,11 +1,30 @@
-import React from "react";
+"use client";
 
-const Dashboard = () => {
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
+
+export default function DashboardPage() {
+  const { userID, accCreated, setUserID, setAccCreated } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setUserID(null);
+    setAccCreated(null);
+    router.push("/login");
+  };
+
   return (
-    <div>
-      <h1>This is dashboard</h1>
-    </div>
+    <main className="p-8">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <p>UserID: {userID}</p>
+      <p>accCreated: {accCreated}</p>
+      <button
+        onClick={handleLogout}
+        className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
+      >
+        Logout
+      </button>
+    </main>
   );
-};
-
-export default Dashboard;
+}

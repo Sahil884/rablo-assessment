@@ -9,7 +9,7 @@ import { createManagerProfile } from "../../api/profile";
 import SpinnerWithText from "@/src/components/SpinnerWithText";
 
 export default function CreateProfilePage() {
-  const { setUserID, setAccCreated } = useAuth();
+  const { userID, setUserID, setAccCreated } = useAuth();
   const [Loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();

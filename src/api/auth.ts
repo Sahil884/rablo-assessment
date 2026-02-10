@@ -11,10 +11,10 @@ export function googleLoginRedirect() {
 // src/api/auth.ts
 export function logout(
   setUserID: (id: string | null) => void,
-  setAccCreated: (val: number | null) => void,
+  setAccCreated: (val: number) => void,
 ) {
   localStorage.clear();
   setUserID(null);
-  setAccCreated(null);
+  setAccCreated(0);
   window.location.href = "/login"; // ensures full reload
 }

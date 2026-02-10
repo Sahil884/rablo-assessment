@@ -1,30 +1,26 @@
 "use client";
-
 export const dynamic = "force-dynamic";
 
+import { Suspense } from "react";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { createManagerProfile } from "../../api/profile";
 import SpinnerWithText from "@/src/components/SpinnerWithText";
 
-export default function CreateProfilePage() {
+// ✅ Extract your form into a separate component
+function ManagerForm() {
   const { userID, setUserID, setAccCreated } = useAuth();
   const [Loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // const userID =
-  //   typeof window !== "undefined" ? localStorage.getItem("userID") : null;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const id = searchParams.get("userID");
     if (id) {
-      // Save to localStorage
       localStorage.setItem("userID", id);
-      // Save to context
       setUserID(id);
 
       const accCreated = localStorage.getItem("accCreated");
@@ -33,7 +29,6 @@ export default function CreateProfilePage() {
         router.push("/dashboard");
       } else {
         setAccCreated(0);
-        // stay on manager page (profile creation form)
       }
     }
   }, [searchParams, router, setUserID, setAccCreated]);
@@ -44,7 +39,7 @@ export default function CreateProfilePage() {
     gender: "",
     dob: "",
     role: "Manager",
-    coordinates: [77.5946, 12.9716], // static for now
+    coordinates: [77.5946, 12.9716],
     addressLine1: "",
     addressLine2: "",
     city: "",
@@ -58,7 +53,6 @@ export default function CreateProfilePage() {
     if (!userID) return;
 
     setLoading(true);
-
     try {
       await createManagerProfile(userID, {
         contactNumber: form.contactNumber,
@@ -200,5 +194,14 @@ export default function CreateProfilePage() {
         </button>
       </form>
     </main>
+  );
+}
+
+// ✅ Wrap ManagerForm in Suspense
+export default function CreateProfilePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ManagerForm />
+    </Suspense>
   );
 }

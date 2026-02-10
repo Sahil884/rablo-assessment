@@ -61,6 +61,7 @@ export default function CreateProfilePage() {
         contactNumber: form.contactNumber,
         dob: form.dob,
         role: form.role,
+        gender: form.gender,
         coordinates: form.coordinates,
         city: form.city,
         state: form.state,

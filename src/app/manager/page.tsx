@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { createManagerProfile } from "../../api/profile";
+import SpinnerWithText from "@/src/components/SpinnerWithText";
 
 export default function CreateProfilePage() {
   const { setUserID, setAccCreated } = useAuth();
+  const [Loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -51,29 +54,27 @@ export default function CreateProfilePage() {
     e.preventDefault();
     if (!userID) return;
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/manager/createManagerProfile/${userID}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contactNumber: form.contactNumber,
-          dob: form.dob,
-          role: form.role,
-          coordinates: form.coordinates,
-          city: form.city,
-          state: form.state,
-          country: form.country,
-          pincode: form.pincode,
-        }),
-      },
-    );
+    setLoading(true);
 
-    if (res.ok) {
+    try {
+      await createManagerProfile(userID, {
+        contactNumber: form.contactNumber,
+        dob: form.dob,
+        role: form.role,
+        coordinates: form.coordinates,
+        city: form.city,
+        state: form.state,
+        country: form.country,
+        pincode: form.pincode,
+      });
+
       localStorage.setItem("accCreated", "1");
+      setAccCreated(1);
       router.push("/dashboard");
-    } else {
+    } catch (err) {
       alert("Profile creation failed. Please check required fields.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -191,7 +192,7 @@ export default function CreateProfilePage() {
           type="submit"
           className="w-full bg-[#B8FE22] text-black font-semibold py-2 rounded hover:bg-green-500"
         >
-          Create Profile
+          {Loading ? <SpinnerWithText text="Creating..." /> : "Create Profile"}
         </button>
       </form>
     </main>

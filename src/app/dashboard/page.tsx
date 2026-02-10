@@ -2,17 +2,11 @@
 
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
+import { logout } from "../../api/auth";
 
 export default function DashboardPage() {
   const { userID, accCreated, setUserID, setAccCreated } = useAuth();
   const router = useRouter();
-
-  const handleLogout = () => {
-    localStorage.clear();
-    setUserID(null);
-    setAccCreated(null);
-    router.push("/login");
-  };
 
   return (
     <main className="p-8">
@@ -20,7 +14,7 @@ export default function DashboardPage() {
       <p>UserID: {userID}</p>
       <p>accCreated: {accCreated}</p>
       <button
-        onClick={handleLogout}
+        onClick={() => logout(setUserID, setAccCreated)}
         className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
       >
         Logout

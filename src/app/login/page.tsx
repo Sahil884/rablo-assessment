@@ -1,17 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { saveUserID, saveAccCreated } from "../../utils/storage";
-import { getBasicProfile } from "../../api/profile";
-import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
+
 import LoginButtons from "@/src/components/LoginButtons";
 import GetStartedButton from "@/src/components/GetStartedButton";
+import { googleLoginRedirect } from "../../api/auth";
 
 export default function LoginPage() {
-  const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const MANAGER_ID = process.env.NEXT_PUBLIC_MANAGER_ID;
-
   const [toLogin, setToLogin] = useState(false);
 
   // const router = useRouter();
@@ -50,18 +45,13 @@ export default function LoginPage() {
     setToLogin(true);
   };
 
-  const handleGoogleLogin = () => {
-    // window.location.href = `${BASE_URL}/auth/google/manager`
-    window.location.href = `/manager?userID=${MANAGER_ID}`;
-  };
-
   return (
     <main
       className="relative flex h-screen flex-col justify-end bg-cover bg-center text-white"
       style={{ backgroundImage: "url('/fitness-smile.png')" }}
     >
       {toLogin ? (
-        <LoginButtons onGoogleLogin={handleGoogleLogin} />
+        <LoginButtons onGoogleLogin={googleLoginRedirect} />
       ) : (
         <GetStartedButton onClick={handleHomeButton} />
       )}

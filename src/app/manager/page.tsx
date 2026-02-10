@@ -20,10 +20,10 @@ export default function CreateProfilePage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const userID = searchParams.get("userID");
-    if (userID) {
+    const id = searchParams.get("userID");
+    if (id) {
       // Save to localStorage
-      localStorage.setItem("userID", userID);
+      localStorage.setItem("userID", id);
       // Save to context
       setUserID(userID);
 

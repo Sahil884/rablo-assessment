@@ -1,16 +1,36 @@
-// context/AuthContext.tsx
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
 
-const AuthContext = createContext<any>(null);
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+interface AuthContextType {
+  userID: string | null;
+  accCreated: number;
+  setUserID: (id: string | null) => void;
+  setAccCreated: (val: number) => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [userID, setUserID] = useState<string | null>(null);
-  const [accCreated, setAccCreated] = useState<number | null>(null);
+  const [accCreated, setAccCreated] = useState<number>(0);
 
+  // ✅ Initialize from localStorage on mount
   useEffect(() => {
-    setUserID(localStorage.getItem("userID"));
-    setAccCreated(Number(localStorage.getItem("accCreated")));
+    if (typeof window === "undefined") return;
+
+    const storedUserID = localStorage.getItem("userID");
+    const storedAccCreated = localStorage.getItem("accCreated");
+
+    if (storedUserID) setUserID(storedUserID);
+    if (storedAccCreated === "1") setAccCreated(1);
+    else setAccCreated(0);
   }, []);
 
   return (
@@ -22,4 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
+}

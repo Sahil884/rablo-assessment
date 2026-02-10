@@ -1,6 +1,6 @@
-export const dynamic = "force-dynamic";
-
 ("use client");
+
+export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -17,9 +17,10 @@ export default function CreateProfilePage() {
   // const userID =
   //   typeof window !== "undefined" ? localStorage.getItem("userID") : null;
 
-  const userID = searchParams.get("userID");
-
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const userID = searchParams.get("userID");
     if (userID) {
       // Save to localStorage
       localStorage.setItem("userID", userID);
@@ -35,7 +36,7 @@ export default function CreateProfilePage() {
         // stay on manager page (profile creation form)
       }
     }
-  }, [userID, router, setUserID, setAccCreated]);
+  }, [searchParams, router, setUserID, setAccCreated]);
 
   const [form, setForm] = useState({
     fullName: "",

@@ -25,7 +25,7 @@ export default function CreateProfilePage() {
       // Save to localStorage
       localStorage.setItem("userID", id);
       // Save to context
-      setUserID(userID);
+      setUserID(id);
 
       const accCreated = localStorage.getItem("accCreated");
       if (accCreated === "1") {

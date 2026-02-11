@@ -11,10 +11,10 @@ import { getBasicProfile } from "../../api/profile";
 
 // ✅ Extract your form into a separate component
 function ManagerForm() {
-  const { userID, setUserID, setAccCreated } = useAuth();
+  const { userID, setAccCreated } = useAuth();
   const [Loading, setLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const [ready, setReady] = useState(false);
 
   // useEffect(() => {
   //   if (typeof window === "undefined") return;
@@ -47,6 +47,25 @@ function ManagerForm() {
   //     })();
   //   }
   // }, [searchParams, router, setUserID, setAccCreated]);
+
+  useEffect(() => {
+    const accCreated = localStorage.getItem("accCreated");
+    if (accCreated === "1") {
+      router.replace("/dashboard");
+    } else if (accCreated === "0") {
+      setReady(true); // show form only when incomplete
+    } else {
+      router.replace("/splash"); // let splash decide
+    }
+  }, [router]);
+
+  if (!ready) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   const [form, setForm] = useState({
     fullName: "",

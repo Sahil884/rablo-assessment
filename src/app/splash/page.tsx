@@ -10,16 +10,22 @@ export default function SplashPage() {
     // Read persisted values
     const userID = localStorage.getItem("userID");
     const accCreated = localStorage.getItem("accCreated");
-    console.log("Splash values:", { userID, accCreated });
+    const authToken = localStorage.getItem("authToken");
 
-    if (!userID) {
+    if (!authToken) {
+      // No token → must login
+      router.replace("/login");
+    } else if (!userID) {
+      // Token exists but no userID → fallback to login
       router.replace("/login");
     } else if (accCreated === "0" || accCreated === null) {
-      router.replace(`/manager?userID=${userID}`); // profile creation
+      // Profile incomplete
+      router.replace(`/manager?userID=${userID}`);
     } else if (accCreated === "1") {
+      // Profile complete
       router.replace("/dashboard");
     } else {
-      // fallback → login
+      // Fallback
       router.replace("/login");
     }
   }, [router]);

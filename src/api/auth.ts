@@ -53,19 +53,21 @@ import { getBasicProfile } from "../api/profile";
 // }
 
 export async function googleLoginRedirect() {
+  // If we already have a userID in the URL, we are in step 2
+  const params = new URLSearchParams(window.location.search);
+  const userID = params.get("userID");
+
+  if (!userID) {
+    // step 1: send user to backend Google Auth
+    window.location.href = `${BASE_URL}/auth/google/manager`;
+    console.log("Google auth hit");
+    return;
+  }
+
   try {
-    // 1. Extract userID from redirected URL
-    const params = new URLSearchParams(window.location.search);
-    const userID = params.get("userID");
-
-    if (!userID) {
-      throw new Error("No userID found in redirect URL");
-    }
-
-    // 2. Persist userID
+    // step 2: handle redirect back with userID
     localStorage.setItem("userID", userID);
 
-    // 3. Fetch basic profile
     const profile = await getBasicProfile(userID);
     console.log("Profile response:", profile);
 

@@ -81,9 +81,9 @@ export async function googleLoginRedirect() {
   } catch (err) {
     console.error("Google login failed:", err);
     alert("Google login failed. Please try again later.");
-    localStorage.removeItem("userID");
-    localStorage.removeItem("accCreated");
-    window.location.href = "/login";
+    // localStorage.removeItem("userID");
+    // localStorage.removeItem("accCreated");
+    // window.location.href = "/login";
   }
 }
 

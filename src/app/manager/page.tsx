@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { createManagerProfile } from "../../api/profile";
 import SpinnerWithText from "@/src/components/SpinnerWithText";
+import { getBasicProfile } from "../../api/profile";
 
 // ✅ Extract your form into a separate component
 function ManagerForm() {
@@ -23,12 +24,24 @@ function ManagerForm() {
       localStorage.setItem("userID", id);
       setUserID(id);
 
-      const accCreated = localStorage.getItem(`accCreated`);
-      if (accCreated === "1") {
-        setAccCreated(1);
-      } else if (accCreated === "0" || accCreated === null) {
-        setAccCreated(0);
-      }
+      // Fetch profile from backend
+      (async () => {
+        try {
+          const res = await getBasicProfile(id); // GET /manager/getBasicProfile/{id}
+          if (res?.data?.accCreated === 1) {
+            localStorage.setItem("accCreated", "1");
+            setAccCreated(1);
+            router.replace("/dashboard");
+          } else {
+            localStorage.setItem("accCreated", "0");
+            setAccCreated(0);
+            // stay on manager form
+          }
+        } catch (err) {
+          console.error("Failed to fetch profile:", err);
+          router.replace("/login");
+        }
+      })();
     }
   }, [searchParams, router, setUserID, setAccCreated]);
 

@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { AuthProvider } from "../context/AuthContext";
 import SplashPage from "./splash/page";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Assessment App",
@@ -20,7 +21,10 @@ export default function RootLayout({
       </head>
       <AuthProvider>
         <body>
-          <SplashPage />
+          <Suspense fallback={<div>Loading...</div>}>
+            <SplashPage />
+          </Suspense>
+
           {children}
         </body>
       </AuthProvider>

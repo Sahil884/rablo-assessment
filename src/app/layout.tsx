@@ -21,9 +21,7 @@ export default function RootLayout({
       </head>
       <AuthProvider>
         <body>
-          <Suspense fallback={<div>Loading...</div>}>
-            <SplashPage />
-          </Suspense>
+          <SplashPage />
 
           {children}
         </body>

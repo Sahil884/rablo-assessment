@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getBasicProfile } from "@/src/api/profile";
 
 export default function SplashPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const userID = searchParams.get("userID");
+    const params = new URLSearchParams(window.location.search);
+
+    const token = params.get("token");
+    const userID = params.get("userID");
 
     // If backend just redirected with token + userID
     if (token && userID) {
@@ -65,7 +66,7 @@ export default function SplashPage() {
         }
       })();
     }
-  }, [router, searchParams]);
+  }, [router]);
 
   return (
     // <main className="flex h-screen items-center justify-center bg-gray-900 text-white">

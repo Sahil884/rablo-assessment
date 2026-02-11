@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import SplashPage from "./splash/page";
-import { Suspense } from "react";
 
 export default function HomePage() {
   const router = useRouter();
@@ -46,8 +45,7 @@ export default function HomePage() {
     //     </button>
     //   </div>
     // </main>
-    <Suspense fallback={<div>Loading...</div>}>
-      <SplashPage />
-    </Suspense>
+
+    <SplashPage />
   );
 }

@@ -23,11 +23,10 @@ function ManagerForm() {
       localStorage.setItem("userID", id);
       setUserID(id);
 
-      const accCreated = localStorage.getItem("accCreated");
+      const accCreated = localStorage.getItem(`accCreated`);
       if (accCreated === "1") {
         setAccCreated(1);
-        router.push("/dashboard");
-      } else {
+      } else if (accCreated === "0" || accCreated === null) {
         setAccCreated(0);
       }
     }
@@ -199,6 +198,15 @@ function ManagerForm() {
 
 // ✅ Wrap ManagerForm in Suspense
 export default function CreateProfilePage() {
+  const { accCreated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (accCreated === 1) {
+      router.replace("/dashboard"); // skip manager form if already created
+    }
+  }, [accCreated, router]);
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <ManagerForm />

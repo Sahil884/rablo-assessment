@@ -1,7 +1,8 @@
 import React from "react";
+import { MANAGER_ID } from "../api/auth";
 
 interface LoginButtonsProps {
-  onGoogleLogin: () => void;
+  onGoogleLogin: (managerId: string) => void;
   onLinkedInLogin?: () => void;
   onFacebookLogin?: () => void;
 }
@@ -34,7 +35,7 @@ const LoginButtons: React.FC<LoginButtonsProps> = ({
           <div className="flex flex-col gap-2 pb-4">
             {/* Google */}
             <button
-              onClick={onGoogleLogin}
+              onClick={() => onGoogleLogin(MANAGER_ID!)}
               className="flex items-center justify-center gap-2 bg-[#2F5B6C] border-2 border-[#2F5B6C] text-white font-semibold py-3 px-6 rounded-lg transition hover:bg-gray-200"
             >
               <img src="/icons/google.svg" alt="Google" className="h-5 w-5" />

@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { AuthProvider } from "../context/AuthContext";
+import SplashPage from "./splash/page";
 
 export const metadata: Metadata = {
   title: "Assessment App",
@@ -18,7 +19,10 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <AuthProvider>
-        <body>{children}</body>
+        <body>
+          <SplashPage />
+          {children}
+        </body>
       </AuthProvider>
     </html>
   );

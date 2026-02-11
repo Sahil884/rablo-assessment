@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import LoginButtons from "@/src/components/LoginButtons";
 import GetStartedButton from "@/src/components/GetStartedButton";
-import { googleLoginRedirect, MANAGER_ID } from "../../api/auth";
+import { googleLoginRedirect } from "../../api/auth";
 
 export default function LoginPage() {
   const [toLogin, setToLogin] = useState(false);

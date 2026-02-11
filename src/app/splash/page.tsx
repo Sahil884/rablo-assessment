@@ -2,32 +2,49 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getBasicProfile } from "@/src/api/profile";
 
 export default function SplashPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Read persisted values
     const userID = localStorage.getItem("userID");
     const accCreated = localStorage.getItem("accCreated");
     const authToken = localStorage.getItem("authToken");
 
-    if (!authToken) {
-      // No token → must login
+    // If no token or userID → force login
+    if (!authToken || !userID) {
       router.replace("/login");
-    } else if (!userID) {
-      // Token exists but no userID → fallback to login
-      router.replace("/login");
-    } else if (accCreated === "0" || accCreated === null) {
-      // Profile incomplete
-      router.replace(`/manager?userID=${userID}`);
-    } else if (accCreated === "1") {
-      // Profile complete
-      router.replace("/dashboard");
-    } else {
-      // Fallback
-      router.replace("/login");
+      return;
     }
+
+    // If accCreated already persisted → route immediately
+    if (accCreated === "1") {
+      router.replace("/dashboard");
+      return;
+    }
+    if (accCreated === "0") {
+      router.replace(`/manager?userID=${userID}`);
+      return;
+    }
+
+    // Otherwise → fetch profile from backend
+    (async () => {
+      try {
+        const res = await getBasicProfile(userID);
+        if (res?.data?.accCreated === 1) {
+          localStorage.setItem("accCreated", "1");
+          router.replace("/dashboard");
+        } else {
+          localStorage.setItem("accCreated", "0");
+          router.replace(`/manager?userID=${userID}`);
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+        localStorage.clear();
+        router.replace("/login");
+      }
+    })();
   }, [router]);
 
   return (

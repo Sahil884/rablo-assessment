@@ -16,34 +16,37 @@ function ManagerForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+  // useEffect(() => {
+  //   if (typeof window === "undefined") return;
 
-    const id = searchParams.get("userID");
-    if (id) {
-      localStorage.setItem("userID", id);
-      setUserID(id);
+  //   const id = searchParams.get("userID");
+  //   const token = searchParams.get("token");
 
-      // Fetch profile from backend
-      (async () => {
-        try {
-          const res = await getBasicProfile(id); // GET /manager/getBasicProfile/{id}
-          if (res?.data?.accCreated === 1) {
-            localStorage.setItem("accCreated", "1");
-            setAccCreated(1);
-            router.replace("/dashboard");
-          } else {
-            localStorage.setItem("accCreated", "0");
-            setAccCreated(0);
-            // stay on manager form
-          }
-        } catch (err) {
-          console.error("Failed to fetch profile:", err);
-          router.replace("/login");
-        }
-      })();
-    }
-  }, [searchParams, router, setUserID, setAccCreated]);
+  //   if (id && token) {
+  //     localStorage.setItem("userID", id);
+  //     localStorage.setItem("authToken", token);
+  //     setUserID(id);
+
+  //     (async () => {
+  //       try {
+  //         const res = await getBasicProfile(id); // GET /manager/getBasicProfile/{id}
+  //         if (res?.data?.accCreated === 1) {
+  //           localStorage.setItem("accCreated", "1");
+  //           setAccCreated(1);
+  //           router.replace("/dashboard");
+  //         } else {
+  //           localStorage.setItem("accCreated", "0");
+  //           setAccCreated(0);
+  //           // stay on manager form
+  //         }
+  //       } catch (err) {
+  //         console.error("Failed to fetch profile:", err);
+  //         localStorage.clear();
+  //         router.replace("/login");
+  //       }
+  //     })();
+  //   }
+  // }, [searchParams, router, setUserID, setAccCreated]);
 
   const [form, setForm] = useState({
     fullName: "",

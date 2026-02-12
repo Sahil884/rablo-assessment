@@ -39,6 +39,7 @@ export default function SplashPage() {
             router.replace("/login");
           } else {
             // Keep token + userID, let user continue to manager form
+            localStorage.setItem("accCreated", "0");
             router.replace(`/manager?userID=${userID}`);
           }
         }

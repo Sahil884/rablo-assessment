@@ -1,20 +1,17 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { Suspense } from "react";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { createManagerProfile } from "../../api/profile";
 import SpinnerWithText from "@/src/components/SpinnerWithText";
-import { getBasicProfile } from "../../api/profile";
 
 // ✅ Extract your form into a separate component
 function ManagerForm() {
   const { userID, setAccCreated } = useAuth();
   const [Loading, setLoading] = useState(false);
   const router = useRouter();
-  const [ready, setReady] = useState(false);
 
   // useEffect(() => {
   //   if (typeof window === "undefined") return;
@@ -47,25 +44,6 @@ function ManagerForm() {
   //     })();
   //   }
   // }, [searchParams, router, setUserID, setAccCreated]);
-
-  useEffect(() => {
-    const accCreated = localStorage.getItem("accCreated");
-    if (accCreated === "1") {
-      router.replace("/dashboard");
-    } else if (accCreated === "0") {
-      setReady(true); // show form only when incomplete
-    } else {
-      router.replace("/splash"); // let splash decide
-    }
-  }, [router]);
-
-  if (!ready) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
-  }
 
   const [form, setForm] = useState({
     fullName: "",
@@ -231,20 +209,28 @@ function ManagerForm() {
   );
 }
 
-// ✅ Wrap ManagerForm in Suspense
 export default function CreateProfilePage() {
   const { accCreated } = useAuth();
   const router = useRouter();
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (accCreated === 1) {
-      router.replace("/dashboard"); // skip manager form if already created
+      // ✅ Already created → go to dashboard
+      router.replace("/dashboard");
+    } else {
+      // ✅ Either accCreated === 0 or not set yet → show form
+      setReady(true);
     }
   }, [accCreated, router]);
 
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ManagerForm />
-    </Suspense>
-  );
+  if (!ready) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
+
+  return <ManagerForm />;
 }

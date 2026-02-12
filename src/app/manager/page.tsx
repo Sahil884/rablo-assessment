@@ -215,6 +215,15 @@ export default function CreateProfilePage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    const userID = localStorage.getItem("userID");
+
+    if (!token || !userID) {
+      // ✅ No auth → go to login
+      router.replace("/login");
+      return;
+    }
+
     if (accCreated === 1) {
       // ✅ Already created → go to dashboard
       router.replace("/dashboard");

@@ -21,6 +21,8 @@ export default function SplashPage() {
       (async () => {
         try {
           const res = await getBasicProfile(userID);
+          console.log("Profile response:", res);
+
           if (res?.data?.accCreated === 1) {
             localStorage.setItem("accCreated", "1");
             router.replace("/dashboard");
@@ -28,13 +30,21 @@ export default function SplashPage() {
             localStorage.setItem("accCreated", "0");
             router.replace(`/manager?userID=${userID}`);
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error("Profile fetch failed:", err);
-          localStorage.clear();
-          router.replace("/login");
+
+          // Only clear storage if explicitly unauthorized
+          if (err?.response?.status === 401 || err?.response?.status === 403) {
+            localStorage.clear();
+            router.replace("/login");
+          } else {
+            // Keep token + userID, let user continue to manager form
+            router.replace(`/manager?userID=${userID}`);
+          }
         }
       })();
-      return;
+
+      return; // stop here — don’t run fallback logic yet
     }
 
     // Otherwise, fall back to persisted values
@@ -52,7 +62,9 @@ export default function SplashPage() {
       // If accCreated missing, fetch profile once
       (async () => {
         try {
-          const res = await getBasicProfile(persistedUserID);
+          const res = await getBasicProfile(persistedUserID!);
+          console.log("Profile response:", res);
+
           if (res?.data?.accCreated === 1) {
             localStorage.setItem("accCreated", "1");
             router.replace("/dashboard");
@@ -60,9 +72,15 @@ export default function SplashPage() {
             localStorage.setItem("accCreated", "0");
             router.replace(`/manager?userID=${persistedUserID}`);
           }
-        } catch {
-          localStorage.clear();
-          router.replace("/login");
+        } catch (err: any) {
+          console.error("Profile fetch failed:", err);
+
+          if (err?.response?.status === 401 || err?.response?.status === 403) {
+            localStorage.clear();
+            router.replace("/login");
+          } else {
+            router.replace(`/manager?userID=${persistedUserID}`);
+          }
         }
       })();
     }
